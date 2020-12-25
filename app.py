@@ -513,6 +513,7 @@ def prediction_map_18():
         )
     )
 def shap_summary_plot():
+    @st.cache
     df2 = pd.read_csv('df.csv')
     X = df2.drop(labels = ['datetime', 'activity'] , axis =1)
     y = df2.activity
