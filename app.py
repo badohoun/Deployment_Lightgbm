@@ -6,6 +6,7 @@ import plotly.express as px
 from PIL import Image
 import pickle
 import lightgbm as lgb
+import shap
 
 
 icon = Image.open("Inetum_logo.jpg")
@@ -505,6 +506,45 @@ def prediction_map_18():
 
         )
     )
+  def shap_summary_plot():
+    @st.cache
+    df2 = pd.read_csv('df.csv')
+    X = df2.drop(labels = ['datetime', 'activity'] , axis =1)
+    y = df2.activity
+
+    X_train, X_test, y_train, y_test = train_test_split(X,y, test_size = 0.2 , random_state=42, stratify=y)
+    np.random.seed(42)
+    learning_rate = 0.46
+    is_unbalance=True
+    n_estimators=6000
+    n_jobs=1
+    num_class=3
+    num_leaves=90
+    objective = 'multiclass'
+    boosting_type = 'dart'
+
+
+    #!pip install lightgbm
+    import lightgbm as lgb
+    model = lgb.LGBMClassifier(learning_rate = learning_rate , is_unbalance=is_unbalance, n_estimators=n_estimators, n_jobs=n_jobs, num_class=num_class,num_leaves=num_leaves, objective = objective, boosting_type = boosting_type)
+
+    model.fit(X_train, y_train)
+
+
+    fig = plt.figure(figsize = (12,5))
+    plt.xticks(rotation = 80)
+    explainer = shap.TreeExplainer(model)
+    shap_values =explainer.shap_values(X_train)
+
+    st.header('Feature Importance')
+    plt.title('Feature importance based on SHAP values (Bar) ')
+
+    shap.summary_plot(shap_values , X_train , plot_type="bar")
+    shap.summary_plot(shap_values , X)
+    st.set_option('deprecation.showPyplotGlobalUse', False)
+    st.pyplot(bbox_inches = 'tight')
+    st.pyplot(fig)
+
 
 if __name__ == "__main__":
     main()
