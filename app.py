@@ -135,7 +135,7 @@ def main():
         st.header("Map Prediction 18")
         prediction_map_18()
     elif page == "Summary Plot":
-        st.header("Summary Plot(to check features shift the decision positively or negatively)")
+        st.header("Check features shift the decision positively)")
         shap_summary_plot()
 
 
@@ -550,7 +550,6 @@ def shap_summary_plot():
     plt.title('Feature importance based on SHAP values (Bar) ')
 
     shap.summary_plot(shap_values , X_train , plot_type="bar")
-    shap.summary_plot(shap_values , X)
     st.set_option('deprecation.showPyplotGlobalUse', False)
     st.pyplot(bbox_inches = 'tight')
     st.pyplot(fig)
